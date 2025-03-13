@@ -1,0 +1,1 @@
+MONGO_URI=mongodb+srv://hamedpouyanfar1987:<password>@cluster0.fijah.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
