@@ -1,1 +1,2 @@
-MONGO_URI=mongodb+srv://hamedpouyanfar1987:<password>@cluster0.fijah.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+MONGO_URI=mongodb+srv://1049710910110011211111712197110:b8tIMKmHb2kJaXCD@shikpooshcluster.zr2kq.mongodb.net/?retryWrites=true&w=majority&appName=shikpooshcluster
+PORT=5000
