@@ -35,3 +35,44 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
+app.get("/api/test", (req, res) => {
+    res.json({ message: "API is working fine! 🚀" });
+});
+const Product = require("./models/Product");
+
+app.get("/api/products", async (req, res) => {
+    try {
+        const products = await Product.find();
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ message: "Server Error", error });
+    }
+});
+
+app.get('/products', async (req, res) => {
+    try {
+        const products = await Product.find();
+        res.status(200).json(products);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "خطای سرور", error });
+    }
+});
+
+app.post('/products', async (req, res) => {
+    try {
+        const { name, price, category, description } = req.body;
+        
+        if (!name || !price || !category) {
+            return res.status(400).json({ message: "لطفاً همه فیلدهای ضروری را پر کنید." });
+        }
+
+        const newProduct = new Product({ name, price, category, description });
+        await newProduct.save();
+
+        res.status(201).json({ message: "محصول با موفقیت اضافه شد!", product: newProduct });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "خطای سرور", error });
+    }
+});
