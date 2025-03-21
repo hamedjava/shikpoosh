@@ -1,78 +1,75 @@
 require('dotenv').config();
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+
+const productRoutes = require('./routes/productRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
-app.use(express.json());
-app.use(cors());
 
-// ✅ اتصال به MongoDB
-async function connectDB() {
+
+const { MongoClient } = require("mongodb"); // ✅ این خط را اضافه کن
+
+const uri = "mongodb://localhost:27017"; // آدرس اتصال به MongoDB
+const dbName = "online_shop"; // نام دیتابیس
+const collectionName = "products"; // نام کالکشن محصولات
+
+
+// Middleware
+app.use(express.json());
+const corsOptions = {
+    origin: '*',  // می‌تونی آدرس فرانت‌اند رو اینجا بذاری مثلاً "http://localhost:3000"
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],  // متدهایی که اجازه داریم استفاده کنیم
+    allowedHeaders: ['Content-Type', 'Authorization']  // هدرهای مجاز
+};
+
+app.use(cors(corsOptions));
+
+// اتصال به دیتابیس MongoDB
+mongoose.connect(MONGO_URI)
+    .then(() => console.log("✅ MongoDB Connected"))
+    .catch(err => console.error("❌ MongoDB Connection Error:", err));
+
+// استفاده از روتر محصولات
+app.use('/products', productRoutes);
+
+
+async function getSortedProductsByPrice(order = "asc") {
+    const client = new MongoClient(uri);
+
     try {
-        await mongoose.connect(MONGO_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
-        console.log("✅ MongoDB Connected Successfully!");
-    } catch (error) {
-        console.error("❌ MongoDB Connection Error:", error.message);
-        process.exit(1);
+        await client.connect();
+        console.log("✅ Connected to MongoDB");
+
+        const db = client.db(dbName);
+        const collection = db.collection(collectionName);
+
+        // تنظیم ترتیب مرتب‌سازی: 1 برای صعودی و -1 برای نزولی
+        const sortOrder = order === "asc" ? 1 : -1;
+
+        const products = await collection.find().sort({ price: sortOrder }).toArray();
+        console.log(`🔍 Products sorted by price (${order === "asc" ? "Low to High" : "High to Low"}):`, products);
+    } catch (err) {
+        console.error("❌ Error:", err);
+    } finally {
+        await client.close();
     }
 }
-connectDB();
 
-// ✅ یک API ساده برای تست
-app.get("/", (req, res) => {
-    res.send("🚀 Shikpoosh Server is Running!");
-});
+// مرتب‌سازی صعودی (ارزان‌ترین به گران‌ترین)
+getSortedProductsByPrice("asc");
 
-// ✅ راه‌اندازی سرور
+// مرتب‌سازی نزولی (گران‌ترین به ارزان‌ترین)
+// getSortedProductsByPrice("desc");
+
+
+
+
+// راه‌اندازی سرور
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
-app.get("/api/test", (req, res) => {
-    res.json({ message: "API is working fine! 🚀" });
-});
-const Product = require("./models/Product");
 
-app.get("/api/products", async (req, res) => {
-    try {
-        const products = await Product.find();
-        res.json(products);
-    } catch (error) {
-        res.status(500).json({ message: "Server Error", error });
-    }
-});
-
-app.get('/products', async (req, res) => {
-    try {
-        const products = await Product.find();
-        res.status(200).json(products);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "خطای سرور", error });
-    }
-});
-
-app.post('/products', async (req, res) => {
-    try {
-        const { name, price, category, description } = req.body;
-        
-        if (!name || !price || !category) {
-            return res.status(400).json({ message: "لطفاً همه فیلدهای ضروری را پر کنید." });
-        }
-
-        const newProduct = new Product({ name, price, category, description });
-        await newProduct.save();
-
-        res.status(201).json({ message: "محصول با موفقیت اضافه شد!", product: newProduct });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "خطای سرور", error });
-    }
-});
