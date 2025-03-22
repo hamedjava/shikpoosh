@@ -3,9 +3,8 @@ const Product = require('../entities/product');
 
 class ProductRepository {
     async getAll() {
-        const products = await db.collection('products').find().toArray();
-        return products.map(p => new Product(p._id, p.name, p.price, p.category));
+        return await Product.find({}); // تمام محصولات رو از دیتابیس بگیر
     }
 }
 
-module.exports = new ProductRepository();
+module.exports = ProductRepository; // دقت کن که کلاس رو صادر کردی

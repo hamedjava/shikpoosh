@@ -1,9 +1,11 @@
-const ProductRepository = require('../repositories/ProductRepository');
-
 class GetAllProducts {
+    constructor(productRepository) {
+        this.productRepository = productRepository; // وابستگی از بیرون میاد ✅
+    }
+
     async execute() {
-        return await ProductRepository.getAll();
+        return await this.productRepository.getAll();
     }
 }
 
-module.exports = new GetAllProducts();
+module.exports = GetAllProducts; // شیء صادر نمی‌کنیم، کلاس رو صادر می‌کنیم ✅

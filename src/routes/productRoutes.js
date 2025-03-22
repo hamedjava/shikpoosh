@@ -1,9 +1,24 @@
 const express = require('express');
-const productController = require('../controllers/ProductController'); // این رو اضافه کردیم
-const product = require('../entities/product'); // مسیر رو چک کن
+const ProductRepository = require('../repositories/ProductRepository');
+const GetAllProducts = require('../use-cases/getAllProducts');
+const Product = require('../entities/product'); // مسیر رو چک کن
+
+
 
 const router = express.Router();
 
-router.get('/products', productController.getAllProducts);
+const getAllProductsUseCase = new GetAllProducts(new ProductRepository()); // وابستگی تزریق شد ✅
+
+router.get('/products', async (req, res) => {
+    try {
+        const products = await getAllProductsUseCase.execute();
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
 
 module.exports = router;
+
