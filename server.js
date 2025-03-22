@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-const productRoutes = require('./routes/productRoutes');
+const productRoutes = require('./src/routes/productRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -65,6 +65,31 @@ getSortedProductsByPrice("asc");
 // مرتب‌سازی نزولی (گران‌ترین به ارزان‌ترین)
 // getSortedProductsByPrice("desc");
 
+
+
+const client = new MongoClient(uri);
+
+async function getProductsSortedByCategory() {
+  try {
+    await client.connect();
+    const db = client.db("online_shop"); // نام دیتابیس خودت را بگذار
+    const productsCollection = db.collection("products"); // نام کالکشن
+
+    const products = await productsCollection
+      .find()
+      .collation({ locale: "fa" }) // مرتب‌سازی بر اساس زبان فارسی
+      .sort({ category: 1 })
+      .toArray();
+
+    console.log(products);
+  } catch (error) {
+    console.error("❌ Error:", error);
+  } finally {
+    await client.close();
+  }
+}
+
+getProductsSortedByCategory();
 
 
 
