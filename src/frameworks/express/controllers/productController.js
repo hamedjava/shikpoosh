@@ -1,4 +1,4 @@
-const Product = require('../entities/product');
+const Product = require('../../../entities/product');
 
 // ایجاد محصول جدید
 exports.createProduct = async (req, res) => {

@@ -1,9 +1,8 @@
 const express = require('express');
-const ProductRepository = require('../repositories/ProductRepository');
-const GetAllProducts = require('../use-cases/getAllProducts');
-const Product = require('../entities/product'); // مسیر رو چک کن
+const GetAllProducts = require("../../../domain/use-cases/getAllProducts");
+const ProductRepository = require("../../../data/repositories/productRepository");
 
-
+const Product = require('../../../domain/entities/product'); // مسیر رو چک کن
 
 const router = express.Router();
 
@@ -17,8 +16,6 @@ router.get('/products', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-
-
 
 module.exports = router;
 

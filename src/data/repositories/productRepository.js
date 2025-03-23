@@ -1,5 +1,5 @@
-const db = require('../frameworks/database/mongo'); // اتصال به دیتابیس
-const Product = require('../entities/product');
+const mongo = require("../../frameworks/database/mongo");
+const Product = require('../../domain/entities/product');
 
 class ProductRepository {
     async getAll() {

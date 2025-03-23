@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-const productRoutes = require('./src/routes/productRoutes');
+const productRoutes = require('./src/frameworks/express/routes/productRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -63,7 +63,7 @@ async function getSortedProductsByPrice(order = "asc") {
 getSortedProductsByPrice("asc");
 
 // مرتب‌سازی نزولی (گران‌ترین به ارزان‌ترین)
-// getSortedProductsByPrice("desc");
+getSortedProductsByPrice("desc");
 
 
 
