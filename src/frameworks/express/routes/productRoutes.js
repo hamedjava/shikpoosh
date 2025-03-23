@@ -1,6 +1,6 @@
 const express = require('express');
 const GetAllProducts = require("../../../domain/use-cases/getAllProducts");
-const ProductRepository = require("../../../data/repositories/productRepository");
+const ProductRepository = require("../../../data/repositories/ProductRepository");
 
 const Product = require('../../../domain/entities/product'); // مسیر رو چک کن
 
