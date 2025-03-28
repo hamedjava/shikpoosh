@@ -31,6 +31,7 @@ const sampleProducts = [
     { name: "جوراب نخی", price: 40000, category: "اکسسوری", stock: 18 },
     { name: "ساعت مچی", price: 1500000, category: "اکسسوری", stock: 3 },
     { name: "سویشرت اسپرت", price: 550000, category: "مردانه", stock: 7 },
+    { name: "سوت اسپرت", price: 550000, category: "مرنه", stock: 7 },
 ];
 
 // تابع برای افزودن محصولات به دیتابیس
