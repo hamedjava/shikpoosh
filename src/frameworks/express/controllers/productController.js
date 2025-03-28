@@ -124,17 +124,24 @@ const getSortedProductsByPrice = async (req, res) => {
     }
 };
 
-// دریافت محصولات مرتب‌شده بر اساس دسته‌بندی
-const getProductsSortedByCategory = async (req, res) => {
+// مرتب‌سازی صعودی بر اساس قیمت
+const getSortedProductsByPriceAsc = async (req, res) => {
     try {
-        const products = await Product.find().sort({ category: 1 });
-
-        res.status(200).json({
-            success: true,
-            count: products.length,
-            data: products,
-        });
+        const products = await Product.find().sort({ price: 1 }); // 1 برای صعودی
+        res.json({ success: true, products });
     } catch (error) {
+        console.error("❌ خطا در مرتب‌سازی صعودی محصولات:", error);
+        res.status(500).json({ success: false, message: "خطای سرور", error });
+    }
+};
+
+// مرتب‌سازی نزولی بر اساس قیمت
+const getSortedProductsByPriceDesc = async (req, res) => {
+    try {
+        const products = await Product.find().sort({ price: -1 }); // -1 برای نزولی
+        res.json({ success: true, products });
+    } catch (error) {
+        console.error("❌ خطا در مرتب‌سازی نزولی محصولات:", error);
         res.status(500).json({ success: false, message: "خطای سرور", error });
     }
 };
@@ -142,15 +149,15 @@ const getProductsSortedByCategory = async (req, res) => {
 
 
 
-const getSortedProductsByPriceAsc = async (req, res) => {
-    req.query.order = "asc";
-    return getSortedProductsByPrice(req, res);
-};
+// const getSortedProductsByPriceAsc = async (req, res) => {
+//     req.query.order = "asc";
+//     return getSortedProductsByPrice(req, res);
+// };
 
-const getSortedProductsByPriceDesc = async (req, res) => {
-    req.query.order = "desc";
-    return getSortedProductsByPrice(req, res);
-};
+// const getSortedProductsByPriceDesc = async (req, res) => {
+//     req.query.order = "desc";
+//     return getSortedProductsByPrice(req, res);
+// };
 
 
 
