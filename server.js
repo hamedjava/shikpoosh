@@ -3,98 +3,67 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+// ایمپورت مسیرها و کنترلرها
 const productRoutes = require('./src/frameworks/express/routes/productRoutes');
+const productController = require('./src/frameworks/express/controllers/productController');
+
+// استخراج متدهای مرتب‌سازی از کنترلر
+const { getSortedProductsByPriceAsc, getSortedProductsByPriceDesc } = productController;
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/shikpoosh'; // استفاده از متغیر محیطی برای MongoDB URI
 
-
-
-const { MongoClient } = require("mongodb"); // ✅ این خط را اضافه کن
-
-const uri = "mongodb://localhost:27017"; // آدرس اتصال به MongoDB
-const dbName = "online_shop"; // نام دیتابیس
-const collectionName = "products"; // نام کالکشن محصولات
-
+// بررسی مقدار MONGO_URI قبل از اتصال
+if (!MONGO_URI) {
+    console.error("❌ خطا: مقدار MONGO_URI در .env یافت نشد!");
+    process.exit(1);
+}
 
 // Middleware
 app.use(express.json());
 const corsOptions = {
-    origin: '*',  // می‌تونی آدرس فرانت‌اند رو اینجا بذاری مثلاً "http://localhost:3000"
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],  // متدهایی که اجازه داریم استفاده کنیم
-    allowedHeaders: ['Content-Type', 'Authorization']  // هدرهای مجاز
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 };
-
 app.use(cors(corsOptions));
 
-// اتصال به دیتابیس MongoDB
+// اتصال به دیتابیس
 mongoose.connect(MONGO_URI)
     .then(() => console.log("✅ MongoDB Connected"))
-    .catch(err => console.error("❌ MongoDB Connection Error:", err));
+    .catch(err => {
+        console.error("❌ MongoDB Connection Error:", err);
+        process.exit(1); // در صورت خطا، سرور به‌طور خودکار متوقف می‌شود
+    });
 
-// استفاده از روتر محصولات
-app.use('/products', productRoutes);
+// استفاده از مسیرهای محصولات
+app.use('/api/products', productRoutes);
 
+// نمایش مسیرهای فعال
+if (process.env.NODE_ENV === 'development') {
+    app._router.stack.forEach((middleware) => {
+        if (middleware.route) {
+            console.log(`🔗 Path: ${middleware.route.path}, Methods: ${Object.keys(middleware.route.methods).join(', ')}`);
+        }
+    });
+}
 
-async function getSortedProductsByPrice(order = "asc") {
-    const client = new MongoClient(uri);
-
-    try {
-        await client.connect();
-        console.log("✅ Connected to MongoDB");
-
-        const db = client.db(dbName);
-        const collection = db.collection(collectionName);
-
-        // تنظیم ترتیب مرتب‌سازی: 1 برای صعودی و -1 برای نزولی
-        const sortOrder = order === "asc" ? 1 : -1;
-
-        const products = await collection.find().sort({ price: sortOrder }).toArray();
-        console.log(`🔍 Products sorted by price (${order === "asc" ? "Low to High" : "High to Low"}):`, products);
-    } catch (err) {
-        console.error("❌ Error:", err);
-    } finally {
-        await client.close();
+app._router.stack.forEach((middleware) => {
+    if (middleware.route) {
+        console.log(`🔗 مسیر فعال: ${middleware.route.path}, متد: ${Object.keys(middleware.route.methods).join(', ')}`);
     }
-}
-
-// مرتب‌سازی صعودی (ارزان‌ترین به گران‌ترین)
-getSortedProductsByPrice("asc");
-
-// مرتب‌سازی نزولی (گران‌ترین به ارزان‌ترین)
-getSortedProductsByPrice("desc");
-
-
-
-const client = new MongoClient(uri);
-
-async function getProductsSortedByCategory() {
-  try {
-    await client.connect();
-    const db = client.db("online_shop"); // نام دیتابیس خودت را بگذار
-    const productsCollection = db.collection("products"); // نام کالکشن
-
-    const products = await productsCollection
-      .find()
-      .collation({ locale: "fa" }) // مرتب‌سازی بر اساس زبان فارسی
-      .sort({ category: 1 })
-      .toArray();
-
-    console.log(products);
-  } catch (error) {
-    console.error("❌ Error:", error);
-  } finally {
-    await client.close();
-  }
-}
-
-getProductsSortedByCategory();
-
-
+});
 
 // راه‌اندازی سرور
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
 
+// مسیر تست
+app.get('/', (req, res) => {
+    res.send('✅ Server is running!');
+});
+
+// بررسی مقدار productRoutes
+console.log("📌 آیا productRoutes مقدار دارد؟", productRoutes);

@@ -1,21 +1,25 @@
 const express = require('express');
-const GetAllProducts = require("../../../domain/use-cases/getAllProducts");
-const ProductRepository = require("../../../data/repositories/ProductRepository");
 
-const Product = require('../../../domain/entities/product'); // مسیر رو چک کن
+const ProductController = require('../../../frameworks/express/controllers/productController');
 
 const router = express.Router();
 
-const getAllProductsUseCase = new GetAllProducts(new ProductRepository()); // وابستگی تزریق شد ✅
+// بررسی مقداردهی صحیح کنترلر
+if (!ProductController || Object.keys(ProductController).length === 0) {
+    console.error("❌ خطا: ProductController مقداردهی نشده است!");
+} else {
+    console.log("📌 ProductController Methods:", Object.keys(ProductController));
+}
 
-router.get('/products', async (req, res) => {
-    try {
-        const products = await getAllProductsUseCase.execute();
-        res.json(products);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
+// روت‌ها
+router.post('/', ProductController.createProduct);
+router.get('/', ProductController.getAllProducts);
+router.get("/search", ProductController.searchProducts);
+router.get('/:id', ProductController.getProductById);
+router.put('/:id', ProductController.updateProduct);
+router.delete('/:id', ProductController.deleteProduct);
+router.get('/sorted-by-price-asc', ProductController.getSortedProductsByPriceAsc);
+router.get('/sorted-by-price-desc', ProductController.getSortedProductsByPriceDesc);
+router.get('/sorted-by-category', ProductController.getProductsSortedByCategory);
 
 module.exports = router;
-
