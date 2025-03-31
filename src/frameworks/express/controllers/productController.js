@@ -148,38 +148,6 @@ const getSortedProductsByPriceDesc = async (req, res) => {
 
 
 
-// دریافت محصولات بر اساس جدیدترین تاریخ ایجاد
-const getNewestProducts = async (req, res) => {
-    try {
-        const products = await Product.find().sort({ createdAt: -1 });
-
-        res.status(200).json({
-            success: true,
-            count: products.length,
-            data: products,
-        });
-    } catch (error) {
-        res.status(500).json({ success: false, message: "خطای سرور", error });
-    }
-};
-
-// دریافت محصولات مرتب‌شده بر اساس دسته‌بندی
-const getProductsSortedByCategory = async (req, res) => {
-    try {
-        const products = await Product.find().sort({ category: 1 });
-
-        res.status(200).json({
-            success: true,
-            count: products.length,
-            data: products,
-        });
-    } catch (error) {
-        res.status(500).json({ success: false, message: "خطای سرور", error });
-    }
-};
-
-
-
 
 // const getSortedProductsByPriceAsc = async (req, res) => {
 //     req.query.order = "asc";
@@ -201,8 +169,7 @@ module.exports = {
     deleteProduct,
     searchProducts,
     getSortedProductsByPrice,
+    getProductsSortedByCategory,
     getSortedProductsByPriceAsc, // مرتب‌سازی صعودی
     getSortedProductsByPriceDesc, // مرتب‌سازی نزولی
-    getNewestProducts,
-    getProductsSortedByCategory,
 };
