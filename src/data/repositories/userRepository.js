@@ -1,29 +1,20 @@
-const db = require('../../frameworks/database/mongo'); // اتصال به دیتابیس
+const mongoose = require("mongoose");
 
-const UserModel = require("../../domain/entities/user");
+const userSchema = new mongoose.Schema(
+  {
+    phoneNumber: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-class UserRepository {
-    async createUser(user) {
-        const newUser = new UserModel(user);
-        return await newUser.save();
-    }
+const User = mongoose.model("User", userSchema);
 
-    async getUserById(id) {
-        return await UserModel.findById(id);
-    }
-
-    async getAllUsers() {
-        return await UserModel.find();
-    }
-
-    async updateUser(id, updatedData) {
-        return await UserModel.findByIdAndUpdate(id, updatedData, { new: true });
-    }
-
-    async deleteUser(id) {
-        return await UserModel.findByIdAndDelete(id);
-    }
-}
-
-module.exports = new UserRepository();
-
+module.exports = User;

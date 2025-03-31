@@ -1,27 +1,54 @@
+// src/entities/User.js
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
 class User {
-    constructor(id, name, email, phone, role) {
-        this.id = id;
-        this.name = name;
+    constructor(email, password) {
         this.email = email;
-        this.phone = phone;
-        this.role = role;
+        this.password = password;
     }
 
-    updateName(newName) {
-        this.name = newName;
+    static async createUser(email, password) {
+        const existingUser = await UserModel.findOne({ email });
+        if (existingUser) {
+            throw new Error('این ایمیل قبلاً ثبت‌نام شده است.');
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        
+        const newUser = new UserModel({ email, password: hashedPassword });
+        await newUser.save();
+        return newUser;
     }
 
-    updateEmail(newEmail) {
-        this.email = newEmail;
+    static async findByEmail(email) {
+        return UserModel.findOne({ email });
     }
 
-    updatePhone(newPhone) {
-        this.phone = newPhone;
-    }
-
-    isAdmin() {
-        return this.role === "admin";
+    async matchPassword(enteredPassword) {
+        return await bcrypt.compare(enteredPassword, this.password);
     }
 }
+
+// ایجاد مدل برای استفاده در Mongoose
+const userSchema = new mongoose.Schema({
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+});
+
+// ثبت متدهای کلاس در مدل
+userSchema.methods.matchPassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
+
+const UserModel = mongoose.model('User', userSchema);
 
 module.exports = User;
