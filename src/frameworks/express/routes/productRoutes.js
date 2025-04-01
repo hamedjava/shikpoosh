@@ -17,10 +17,11 @@ router.get('/', ProductController.getAllProducts);
 router.get("/search", ProductController.searchProducts);
 router.get('/sorted-by-price-asc', ProductController.getSortedProductsByPriceAsc);
 router.get('/sorted-by-price-desc', ProductController.getSortedProductsByPriceDesc);
+router.get('/sorted-by-category', ProductController.getProductsSortedByCategory);
 router.get('/:id', ProductController.getProductById);
 router.put('/:id', ProductController.updateProduct);
 router.delete('/:id', ProductController.deleteProduct);
 
-router.get('/sorted-by-category', ProductController.getProductsSortedByCategory);
+
 
 module.exports = router;

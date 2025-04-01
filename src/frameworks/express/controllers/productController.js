@@ -29,6 +29,26 @@ const getAllProducts = async (req, res) => {
         res.status(500).json({ success: false, message: "خطای سرور", error });
     }
 };
+const getProductsSortedByCategory = async (req, res) => {
+    try {
+        // جستجو و مرتب‌سازی محصولات بر اساس دسته‌بندی (ascending)
+        const products = await Product.find().sort({ category: 1 });
+
+        // ارسال پاسخ با محصولات مرتب‌شده
+        res.status(200).json({
+            success: true,
+            count: products.length,
+            data: products,
+        });
+    } catch (error) {
+        // در صورتی که خطا رخ دهد
+        res.status(500).json({
+            success: false,
+            message: "خطای سرور",
+            error: error.message,
+        });
+    }
+};
 
 // دریافت محصول بر اساس شناسه
 const getProductById = async (req, res) => {
