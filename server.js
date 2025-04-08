@@ -7,8 +7,6 @@ const cors = require('cors');
 const productRoutes = require('./src/frameworks/express/routes/productRoutes');
 const productController = require('./src/frameworks/express/controllers/productController');
 
-const authRoutes = require("./src/frameworks/express/routes/authRoutes");
-const authController = require("./src/frameworks/express/controllers/authController");
 
 // استخراج متدهای مرتب‌سازی از کنترلر
 const { getSortedProductsByPriceAsc, getSortedProductsByPriceDesc } = productController;
@@ -42,8 +40,6 @@ mongoose.connect(MONGO_URI)
 
 // استفاده از مسیرهای محصولات
 app.use('/api/products', productRoutes);
-// اضافه کردن مسیرهای احراز هویت
-app.use("/api/auth", authRoutes);
 
 // نمایش مسیرهای فعال
 if (process.env.NODE_ENV === 'development') {
