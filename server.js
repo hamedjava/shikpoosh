@@ -8,7 +8,7 @@ const productRoutes = require('./src/frameworks/express/routes/productRoutes');
 const productController = require('./src/frameworks/express/controllers/productController');
 const authRoutes = require('../../../../shikpoosh/src/frameworks/express/routes/authRoutes');
 
-// استخراج متدهای مرتب‌سازی از کنترلر
+// استخراج متدهای مرتب‌ سازی از کنترلر
 const { getSortedProductsByPriceAsc, getSortedProductsByPriceDesc } = productController;
 
 const app = express();
