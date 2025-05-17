@@ -7,6 +7,7 @@ const cors = require('cors');
 const productRoutes = require('./src/frameworks/express/routes/productRoutes');
 const productController = require('./src/frameworks/express/controllers/productController');
 const authRoutes = require('../../../../shikpoosh/src/frameworks/express/routes/authRoutes');
+const protectedRoutes = require('./src/frameworks/express/routes/protectedRoutes');
 
 // استخراج متدهای مرتب‌ سازی از کنترلر
 const { getSortedProductsByPriceAsc, getSortedProductsByPriceDesc } = productController;
@@ -41,6 +42,7 @@ mongoose.connect(MONGO_URI)
 // استفاده از مسیرهای محصولات
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api', protectedRoutes);
 
 // نمایش مسیرهای فعال
 if (process.env.NODE_ENV === 'development') {
