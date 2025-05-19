@@ -1,6 +1,7 @@
 const userRepository = require('../../../../src/adapter/repository/userRepository');
 const registerUser = require('../../../domain/use-cases/auth/registerUser');
 const loginUser = require('../../../domain/use-cases/auth/loginUser');
+const sendOTP = require('../../../utils/sendSMS');
 
 
 const register = async (req, res) => {
@@ -28,22 +29,33 @@ const login = async (req, res) => {
     }
 };
 const requestOtp = async (req, res) => {
-    const { phoneNumber } = req.body;
+    try {
+      const { phoneNumber } = req.body;
   
-    if (!phoneNumber) {
-      return res.status(400).json({ message: 'شماره موبایل الزامی است.' });
+      if (!phoneNumber) {
+        return res.status(400).json({ message: 'شماره موبایل الزامی است.' });
+      }
+  
+      // ✅ تولید کد OTP
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+  
+      // TODO: ذخیره در Redis یا دیتابیس برای اعتبارسنجی بعدی
+  
+      // ✅ ارسال پیامک واقعی
+      await sendOTP(phoneNumber, otpCode);
+  
+      // ❗️در نسخه production هرگز OTP رو در پاسخ نده
+      res.status(200).json({
+        message: 'کد تأیید با موفقیت ارسال شد ✅'
+      });
+    } catch (error) {
+      console.error('❌ خطا در ارسال پیامک:', error);
+      res.status(500).json({
+        message: 'ارسال پیامک با خطا مواجه شد. لطفاً دوباره تلاش کنید.'
+      });
     }
-  
-    // 👇 ساخت یک کد OTP ساده و موقت
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-  
-    // اینجا باید OTP رو ذخیره کنی یا بفرستی (مثلاً تو دیتابیس یا Redis)
-    // فعلاً صرفاً لاگ می‌کنیم:
-    console.log(`📩 OTP for ${phoneNumber}: ${otpCode}`);
-  
-    // می‌تونی اینجا توکن هم بسازی برای مرحله بعدی
-    res.status(200).json({ message: 'کد تأیید ارسال شد ✅', otp: otpCode }); // OTP رو بعداً در نسخه production نفرست!
   };
+  
   
   const verifyOtp = async (req, res) => {
     const { phoneNumber, otp } = req.body;
