@@ -7,6 +7,7 @@ router.post('/register', register);
 router.post('/login',login);
 router.get('/protected',protected);
 router.post('/request-otp', requestOtp);
-router.post('/verify-otp', verifyOtp);
+router.post('/verify-otp', verifyOtp); // ⬅️ فقط /verify-otp
+
 
 module.exports = router;
