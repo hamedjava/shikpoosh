@@ -71,7 +71,7 @@ const verifyOtp = async (req, res) => {
     }
 
     // بررسی تاریخ انقضا
-    if (record.expiresAt < new Date()) {
+    if (record.expiresAt < new Date() ) {
       await Otp.deleteMany({ phoneNumber }); // پاک‌سازی رکوردهای منقضی‌شده
       return res.status(401).json({ message: 'کد تأیید منقضی شده است.' });
     }

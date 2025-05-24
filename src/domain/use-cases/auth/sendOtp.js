@@ -3,7 +3,7 @@ const otpStore = {}; // به صورت ساده در حافظه نگه می‌د�
 
 const sendOtp = async (phoneNumber) => {
     const otp = generateOTP();
-    otpStore[phoneNumber] = { code: otp, expiresAt: Date.now() + 2 * 60 * 1000 }; // ۲ دقیقه اعتبار
+    otpStore[phoneNumber] = { code: otp, expiresAt: Date.now() + 5 * 60 * 1000 }; // ۲ دقیقه اعتبار
 
     console.log(`📲 OTP for ${phoneNumber}: ${otp}`); // در عمل واقعی، به SMS ارسال میشه
 
