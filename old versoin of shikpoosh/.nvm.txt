@@ -1,0 +1,2 @@
+MONGO_URI=mongodb://localhost:27017/shikpoosh
+PORT=5000
