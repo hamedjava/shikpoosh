@@ -8,6 +8,8 @@ const productRoutes = require('./src/frameworks/express/routes/productRoutes');
 const productController = require('./src/frameworks/express/controllers/productController');
 const authRoutes = require('../../../../shikpoosh/src/frameworks/express/routes/authRoutes');
 const protectedRoutes = require('./src/frameworks/express/routes/protectedRoutes');
+const auth_routes = require('./src/frameworks/express/routes/auth.routes');
+const cookieParser = require('cookie-parser');
 
 // استخراج متدهای مرتب‌ سازی از کنترلر
 const { getSortedProductsByPriceAsc, getSortedProductsByPriceDesc } = productController;
@@ -43,6 +45,8 @@ mongoose.connect(MONGO_URI)
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api', protectedRoutes);
+app.use('/auth.routes',auth_routes);
+app.use(cookieParser());
 
 // نمایش مسیرهای فعال
 if (process.env.NODE_ENV === 'development') {
