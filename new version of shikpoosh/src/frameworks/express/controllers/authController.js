@@ -9,7 +9,7 @@ const User = require('../../../infrastructure/database/models/User');
 /////////////////////////////for logout///////////////////////////////////////
 const logoutAllDevices = require('../.../../../../domain/use-cases/auth/logoutAllDevices');
 const refreshAccessToken = require('../../../../src/domain/use-cases/auth/refreshToken');
-const logoutUser = require('../../../../src/domain/use-cases/auth/logoutUser')
+const logoutUser = require('../../../../src/domain/use-cases/auth/logoutUser');
 //////////////////////////////for logout////////////////////////////////////////////
 
 
@@ -157,36 +157,49 @@ const logout = async (req, res) => {
 };
 
 
-
-
-
 // خروج از همه دستگاه‌ها
 const logoutAll = async (req, res) => {
   try {
     await logoutAllDevices(req.user._id);
+
+    // کوکی refreshToken فعلی را هم حذف کن
     res.clearCookie('refreshToken');
-    return res.status(200).json({ message: 'از همه دستگاه‌ها خارج شدید.' });
+
+    res.status(200).json({ message: 'از همه دستگاه‌ها خارج شدید.' });
   } catch (err) {
-    return res.status(400).json({ error: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
+
+
 
 // صدور توکن جدید
 const refreshToken = async (req, res) => {
-  const refreshToken = req.cookies.refreshToken;
+  const oldRefreshToken = req.cookies.refreshToken;
 
-  if (!refreshToken) {
+  if (!oldRefreshToken) {
     return res.status(401).json({ error: 'رفرش‌ توکن یافت نشد.' });
   }
+
   try {
-    const result = await refreshAccessToken(refreshToken);
-    return res.status(200).json({ token: result.token, user: result.user });
+    const result = await refreshAccessToken(oldRefreshToken);
+
+    // ست‌کردن کوکی جدید (اختیاری ولی توصیه می‌شود)
+    res.cookie('refreshToken', result.refreshToken, {
+      httpOnly : true,
+      secure   : process.env.NODE_ENV === 'production',
+      sameSite : 'Strict',
+      maxAge   : 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({
+      token: result.token,
+      user : result.user
+    });
   } catch (err) {
-    return res.status(403).json({ error: 'رفرش‌ توکن نامعتبر یا منقضی شده.' });
+    return res.status(403).json({ error: err.message });
   }
-
 };
-
 
 ////////////////////////////////for logout and logoutAllDevices//////////////////////////////////////////
 

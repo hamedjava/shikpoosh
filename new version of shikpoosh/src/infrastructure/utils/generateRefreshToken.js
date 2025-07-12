@@ -11,14 +11,25 @@
 // module.exports = generateRefreshToken;
 
 
+// const jwt = require('jsonwebtoken');
+
+// const generateRefreshToken = (userId) => {
+//   return jwt.sign(
+//     { id: userId },
+//     process.env.REFRESH_TOKEN_SECRET || 'refreshsecret',
+//     { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || '7d' }
+//   );
+// };
+
+// module.exports = generateRefreshToken;
+
+
 const jwt = require('jsonwebtoken');
 
-const generateRefreshToken = (userId) => {
+module.exports = (userId) => {
   return jwt.sign(
     { id: userId },
-    process.env.REFRESH_TOKEN_SECRET || 'refreshsecret',
-    { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || '7d' }
+    process.env.JWT_REFRESH_SECRET || 'refreshkey_super_secret',
+    { expiresIn: '7d' }
   );
 };
-
-module.exports = generateRefreshToken;

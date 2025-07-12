@@ -4,7 +4,7 @@ const logoutAllDevices = async (userId) => {
   const user = await User.findById(userId);
   if (!user) throw new Error('کاربر یافت نشد.');
 
-  user.refreshTokens = [];
+  user.refreshTokens = [];           // پاک‌کردن تمام RefreshTokenها
   await user.save();
 };
 

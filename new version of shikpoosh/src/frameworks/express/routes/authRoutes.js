@@ -45,6 +45,7 @@ router.get('/protected', protected);
 // 👇 مسیرهای logout و refresh
 router.post('/logout', authenticate, authController.logout);
 router.post('/logout-all', authenticate, logoutAll);
-router.post('/refresh-token', refreshToken);
+router.post('/refresh-token', refreshToken);   // نیازی به authMiddleware ندارد
+
 //==============================================================
 module.exports = router;
