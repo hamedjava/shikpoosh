@@ -31,12 +31,14 @@ const {
 } = require('../../../frameworks/express/controllers/authController');
 
 const protected = require('../../../frameworks/express/routes/protectedRoutes');
-const {authenticate} = require('../../../../src/interface/http/authMiddleware');
+const { authenticate } = require('../../../../src/interface/http/authMiddleware');
 const authController = require('../../../frameworks/express/controllers/authController');
+const { loginLimiter, otpLimiter, registerLimiter } = require('../../../../src/interface/http/rateLimiters');
+
 // 👇 مسیرهای Auth
-router.post('/register', register);
-router.post('/login', login);
-router.post('/request-otp', requestOtp);
+router.post('/register', registerLimiter, register);
+router.post('/login', loginLimiter, login);
+router.post('/request-otp', otpLimiter, requestOtp);
 router.post('/verify-otp', verifyOtp);
 //=============================================================
 // 👇 مسیرهای محافظت‌شده
