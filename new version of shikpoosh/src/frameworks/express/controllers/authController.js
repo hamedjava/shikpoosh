@@ -6,13 +6,19 @@ const jwt = require('jsonwebtoken');
 const Otp = require('../../../../src/infrastructure/database/models/otpModel'); // مدل otp جداگانه
 const User = require('../../../infrastructure/database/models/User');
 
+//===============================reset pasword imports=============================
+const requestResetPassword = require('../../../domain/use-cases/resetPassword/requestResetPassword');
+const resetPassword = require('../../../domain/use-cases/resetPassword/resetPassword');
+//===============================reset pasword imports=============================
+
+
 /////////////////////////////for logout///////////////////////////////////////
 const logoutAllDevices = require('../.../../../../domain/use-cases/auth/logoutAllDevices');
 const refreshAccessToken = require('../../../../src/domain/use-cases/auth/refreshToken');
 const logoutUser = require('../../../../src/domain/use-cases/auth/logoutUser');
 //////////////////////////////for logout////////////////////////////////////////////
 
-
+//=============================login and register method================================
 const register = async (req, res) => {
   try {
     const user = await registerUser(req.body, { userRepository });
@@ -49,7 +55,7 @@ const login = async (req, res) => {
     res.status(401).json({ error: err.message });
   }
 };
-
+//=============================login and register method================================
 
 
 
@@ -72,7 +78,7 @@ const login = async (req, res) => {
 //   }
 // };
 
-
+//=====================================Request otp and verify otp methods===========================
 const requestOtp = async (req, res) => {
   const { phoneNumber } = req.body;
   if (!phoneNumber) {
@@ -136,6 +142,8 @@ const verifyOtp = async (req, res) => {
     return res.status(500).json({ message: 'خطای داخلی سرور.' });
   }
 };
+//=====================================Request otp and verify otp methods===========================
+
 
 //////////////////////////////////////for logout and logoutAllDevices///////////////////////////////////////////
 // خروج از یک دستگاه
@@ -186,15 +194,15 @@ const refreshToken = async (req, res) => {
 
     // ست‌کردن کوکی جدید (اختیاری ولی توصیه می‌شود)
     res.cookie('refreshToken', result.refreshToken, {
-      httpOnly : true,
-      secure   : process.env.NODE_ENV === 'production',
-      sameSite : 'Strict',
-      maxAge   : 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.status(200).json({
       token: result.token,
-      user : result.user
+      user: result.user
     });
   } catch (err) {
     return res.status(403).json({ error: err.message });
@@ -202,6 +210,29 @@ const refreshToken = async (req, res) => {
 };
 
 ////////////////////////////////for logout and logoutAllDevices//////////////////////////////////////////
+
+//============================reset password methods=================================
+// ارسال OTP
+const forgotPassword = async (req, res) => {
+  try {
+    await requestResetPassword(req.body.phoneNumber);
+    res.status(200).json({ message: 'کد بازیابی ارسال شد.' });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+// تأیید OTP و تغییر رمز
+const confirmResetPassword = async (req, res) => {
+  try {
+    await resetPassword(req.body); // { phoneNumber, otpCode, newPassword }
+    res.status(200).json({ message: 'رمز عبور با موفقیت تغییر کرد.' });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+//============================reset password methods=================================
+
 
 // ✅ خروجی توابع
 module.exports = {
@@ -211,7 +242,9 @@ module.exports = {
   verifyOtp,
   logout,
   logoutAll,
-  refreshToken, // 👈 حواست باشه اینو export کنی
+  refreshToken,
+  forgotPassword,
+  confirmResetPassword, // 👈 حواست باشه اینو export کنی
 };
 
 

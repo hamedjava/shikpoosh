@@ -35,6 +35,12 @@ const { authenticate } = require('../../../../src/interface/http/authMiddleware'
 const authController = require('../../../frameworks/express/controllers/authController');
 const { loginLimiter, otpLimiter, registerLimiter } = require('../../../../src/interface/http/rateLimiters');
 
+//==============================reset password imports===========================================
+const { forgotPassword, confirmResetPassword } = require('../../../../src/frameworks/express/controllers/authController');
+const { resetLimiter } = require('../../../../src/interface/http/rateLimiters');
+//==============================reset password imports===========================================
+
+
 // 👇 مسیرهای Auth
 router.post('/register', registerLimiter, register);
 router.post('/login', loginLimiter, login);
@@ -50,4 +56,10 @@ router.post('/logout-all', authenticate, logoutAll);
 router.post('/refresh-token', refreshToken);   // نیازی به authMiddleware ندارد
 
 //==============================================================
+
+//=======================================reset password routes=======================
+router.post('/forgot-password', resetLimiter, forgotPassword);
+router.post('/reset-password',  confirmResetPassword);
+//=======================================reset password routes=======================
+
 module.exports = router;

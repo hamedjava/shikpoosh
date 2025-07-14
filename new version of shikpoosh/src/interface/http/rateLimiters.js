@@ -35,8 +35,18 @@ const registerLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const resetLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // ۱۰ دقیقه
+  max: 3,
+  message: { error: 'درخواست بیش از حد برای بازیابی رمز. بعداً تلاش کنید.' },
+  keyGenerator: (req) => req.body.phoneNumber || req.ip,
+});
+
+
+
 module.exports = {
   loginLimiter,
   otpLimiter,
   registerLimiter,
+  resetLimiter
 };
