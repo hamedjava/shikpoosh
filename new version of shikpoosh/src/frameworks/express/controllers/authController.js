@@ -11,6 +11,11 @@ const requestResetPassword = require('../../../domain/use-cases/resetPassword/re
 const resetPassword = require('../../../domain/use-cases/resetPassword/resetPassword');
 //===============================reset pasword imports=============================
 
+//========== sessions imports ===========
+const getSessions = require('../../../domain/use-cases/sessions/getSessions');
+const deleteSession = require('../../../domain/use-cases/sessions/deleteSession');
+//========== sessions imports ===========
+
 
 /////////////////////////////for logout///////////////////////////////////////
 const logoutAllDevices = require('../.../../../../domain/use-cases/auth/logoutAllDevices');
@@ -33,7 +38,8 @@ const login = async (req, res) => {
   const { phoneNumber, password } = req.body;
 
   try {
-    const result = await loginUser(phoneNumber, password);
+    // const result = await loginUser(phoneNumber, password);
+    const result = await loginUser(phoneNumber, password, req); // 👈 req اضافه شده
 
     // 👇 ذخیره refreshToken در کوکی
     res.cookie('refreshToken', result.refreshToken, {
@@ -234,6 +240,32 @@ const confirmResetPassword = async (req, res) => {
 //============================reset password methods=================================
 
 
+//======================================get Sessions==========================================
+const listSessions = async (req, res) => {
+  try {
+    const sessions = await getSessions(req.user._id);
+    res.status(200).json({ sessions });
+  } catch (err) {
+    res.status(500).json({ error: 'خطا در دریافت لیست جلسات.' });
+  }
+};
+//======================================get Sessions==========================================
+
+//==============================DELETE A SESSION============================
+const removeSession = async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    await deleteSession(req.user._id, token);
+    res.status(200).json({ message: 'سشن با موفقیت حذف شد ✅' });
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+};
+//==============================DELETE A SESSION============================
+
+
+
 // ✅ خروجی توابع
 module.exports = {
   register,
@@ -245,6 +277,8 @@ module.exports = {
   refreshToken,
   forgotPassword,
   confirmResetPassword, // 👈 حواست باشه اینو export کنی
+  listSessions,
+  removeSession,
 };
 
 

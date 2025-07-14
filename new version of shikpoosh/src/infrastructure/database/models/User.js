@@ -33,7 +33,15 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['customer', 'seller', 'admin'], default: 'customer' },
 
   // 👇 اضافه کردن این خط
-  refreshTokens: [{ type: String }]
+  refreshTokens: [
+    {
+      token: { type: String, required: true },
+      createdAt: { type: Date, default: Date.now },
+      userAgent: { type: String }, // مرورگر یا اپلیکیشن (اختیاری)
+      ip: { type: String }         // آدرس IP (اختیاری)
+    }
+  ]
+  
 });
 
 userSchema.pre('save', async function (next) {

@@ -40,6 +40,11 @@ const { forgotPassword, confirmResetPassword } = require('../../../../src/framew
 const { resetLimiter } = require('../../../../src/interface/http/rateLimiters');
 //==============================reset password imports===========================================
 
+//==================== sessions imports ===============
+const { listSessions } = require('../../../frameworks/express/controllers/authController');
+const { removeSession } = require('../../../frameworks/express/controllers/authController');
+//==================== sessions imports ===============
+
 
 // 👇 مسیرهای Auth
 router.post('/register', registerLimiter, register);
@@ -56,6 +61,12 @@ router.post('/logout-all', authenticate, logoutAll);
 router.post('/refresh-token', refreshToken);   // نیازی به authMiddleware ندارد
 
 //==============================================================
+
+//================ sessions routes=================
+router.get('/sessions', authenticate, listSessions);
+router.delete('/sessions/:token', authenticate, removeSession);//حتما باید از refreshToken داخل Cookie استفاده کنیم
+//================ sessions routes=================
+
 
 //=======================================reset password routes=======================
 router.post('/forgot-password', resetLimiter, forgotPassword);
