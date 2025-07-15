@@ -61,25 +61,57 @@ const authMiddleware = async (req, res, next) => {
 
 
 const authenticate = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers.authorization || '';
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  // 1) بررسی وجود هدر
+  if (!authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'توکن دسترسی یافت نشد.' });
   }
 
+  // 2) استخراج توکن
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'accesskey');
-    const user = await User.findById(decoded.id);
-    if (!user) return res.status(404).json({ error: 'کاربر یافت نشد.' });
+    // 3) اعتبارسنجی
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secretkey');
 
-    req.user = user;
+    // 4) پیدا کردن کاربر
+    const user = await User.findById(decoded.id).select('-password');
+    if (!user) {
+      return res.status(404).json({ error: 'کاربر یافت نشد.' });
+    }
+
+    // 5) تزریق به req
+    req.user  = user;
+    req.token = token; // ⬅️ برای logoutOtherDevices لازم است
     next();
   } catch (err) {
     return res.status(403).json({ error: 'توکن نامعتبر یا منقضی شده.' });
   }
 };
+
+
+
+// const authenticate = async (req, res, next) => {
+//   const authHeader = req.headers.authorization;
+
+//   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+//     return res.status(401).json({ error: 'توکن دسترسی یافت نشد.' });
+//   }
+
+//   const token = authHeader.split(' ')[1];
+
+//   try {
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'accesskey');
+//     const user = await User.findById(decoded.id);
+//     if (!user) return res.status(404).json({ error: 'کاربر یافت نشد.' });
+
+//     req.user = user;
+//     next();
+//   } catch (err) {
+//     return res.status(403).json({ error: 'توکن نامعتبر یا منقضی شده.' });
+//   }
+// };
   
-module.exports = {authMiddleware,authenticate};
+module.exports = {/*authMiddleware,*/authenticate};
 

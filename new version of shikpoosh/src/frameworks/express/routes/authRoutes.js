@@ -27,7 +27,8 @@ const {
   verifyOtp,
   logout,
   logoutAll,
-  refreshToken
+  refreshToken,
+  logoutOtherDevices,
 } = require('../../../frameworks/express/controllers/authController');
 
 const protected = require('../../../frameworks/express/routes/protectedRoutes');
@@ -58,6 +59,7 @@ router.get('/protected', protected);
 // 👇 مسیرهای logout و refresh
 router.post('/logout', authenticate, authController.logout);
 router.post('/logout-all', authenticate, logoutAll);
+router.post('/logout-others', authenticate, logoutOtherDevices);
 router.post('/refresh-token', refreshToken);   // نیازی به authMiddleware ندارد
 
 //==============================================================

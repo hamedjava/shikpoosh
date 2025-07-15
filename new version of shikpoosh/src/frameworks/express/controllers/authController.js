@@ -21,6 +21,7 @@ const deleteSession = require('../../../domain/use-cases/sessions/deleteSession'
 const logoutAllDevices = require('../.../../../../domain/use-cases/auth/logoutAllDevices');
 const refreshAccessToken = require('../../../../src/domain/use-cases/auth/refreshToken');
 const logoutUser = require('../../../../src/domain/use-cases/auth/logoutUser');
+const logoutOtherDevicesUC = require('../../../domain/use-cases/auth/logoutOtherDevices');
 //////////////////////////////for logout////////////////////////////////////////////
 
 //=============================login and register method================================
@@ -266,6 +267,22 @@ const removeSession = async (req, res) => {
 
 
 
+
+
+//===========================logout other devices==========================
+
+// خروج از تمام دستگاه‌ها به جز دستگاه فعلی
+const logoutOtherDevices = async (req, res) => {
+  try {
+    await logoutOtherDevicesUC(req.user._id, req.token);
+    res.status(200).json({ message: 'از تمام دستگاه‌ها (به‌جز این) خارج شدید ✅' });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+//===========================logout other devices==========================
+
+
 // ✅ خروجی توابع
 module.exports = {
   register,
@@ -279,6 +296,7 @@ module.exports = {
   confirmResetPassword, // 👈 حواست باشه اینو export کنی
   listSessions,
   removeSession,
+  logoutOtherDevices
 };
 
 
