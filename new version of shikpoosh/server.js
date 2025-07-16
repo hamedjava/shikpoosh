@@ -9,6 +9,11 @@ const productController = require('./src/frameworks/express/controllers/productC
 const authRoutes = require('./src/frameworks/express/routes/authRoutes');
 const protectedRoutes = require('./src/frameworks/express/routes/protectedRoutes');
 const cookieParser = require('cookie-parser');
+const adminRoutes = require('./src/interface/http/routes/adminRoutes');
+const sellerRoutes = require('./src/interface/http/routes/sellerRoutes');
+const customerRoutes = require('./src/interface/http/routes/customerRoutes');
+
+
 
 // استخراج متدهای مرتب‌ سازی از کنترلر
 const { getSortedProductsByPriceAsc, getSortedProductsByPriceDesc } = productController;
@@ -55,6 +60,9 @@ app.use(cookieParser());
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api', protectedRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/seller', sellerRoutes);
+app.use('/api/customer', customerRoutes);
 
 
 // نمایش مسیرهای فعال
