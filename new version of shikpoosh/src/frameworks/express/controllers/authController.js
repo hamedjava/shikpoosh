@@ -267,8 +267,6 @@ const removeSession = async (req, res) => {
 
 
 
-
-
 //===========================logout other devices==========================
 
 // خروج از تمام دستگاه‌ها به جز دستگاه فعلی
@@ -281,6 +279,28 @@ const logoutOtherDevices = async (req, res) => {
   }
 };
 //===========================logout other devices==========================
+
+
+//============================get User Sessions===========================
+// نمایش نشست‌های فعال کاربر
+const getUserSessions = async (req, res) => {
+  try {
+    const user = req.user;
+
+    const sessions = (user.refreshTokens || []).map(session => ({
+      userAgent: session.userAgent,
+      ip: session.ip,
+      createdAt: session.createdAt,
+      token: session.token
+    }));
+
+    res.status(200).json({ sessions });
+  } catch (err) {
+    res.status(500).json({ error: 'خطا در دریافت نشست‌ها' });
+  }
+};
+//============================get User Sessions===========================
+
 
 
 // ✅ خروجی توابع
@@ -296,7 +316,8 @@ module.exports = {
   confirmResetPassword, // 👈 حواست باشه اینو export کنی
   listSessions,
   removeSession,
-  logoutOtherDevices
+  logoutOtherDevices,
+  getUserSessions
 };
 
 
