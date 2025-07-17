@@ -43,8 +43,8 @@ const { resetLimiter } = require('../../../../src/interface/http/rateLimiters');
 //==================== sessions imports ===============
 const { listSessions } = require('../../../frameworks/express/controllers/authController');
 const { removeSession } = require('../../../frameworks/express/controllers/authController');
+const { deleteSameSession } = require('../../../frameworks/express/controllers/authController');
 const { getUserSessions } = require('../../../frameworks/express/controllers/authController');
-
 //==================== sessions imports ===============
 
 
@@ -67,8 +67,8 @@ router.post('/refresh-token', refreshToken);   // نیازی به authMiddleware
 //================ sessions routes=================
 router.get('/sessions', authenticate, listSessions);
 router.delete('/sessions/:token', authenticate, removeSession);//حتما باید از refreshToken داخل Cookie استفاده کنیم
+router.delete('/sessions/:token', authenticate, deleteSameSession);
 router.get('/getUserSessions', authenticate, getUserSessions);
-
 //================ sessions routes=================
 
 

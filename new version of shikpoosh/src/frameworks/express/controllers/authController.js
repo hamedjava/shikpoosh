@@ -303,6 +303,33 @@ const getUserSessions = async (req, res) => {
 
 
 
+
+//==========================delete same session=========================
+const deleteSameSession = async (req, res) => {
+  const { token } = req.params;
+  const user = req.user;
+
+  try {
+    // فیلتر کردن سشن‌هایی که برابر با توکن حذف‌شونده نیستند
+    const originalLength = user.refreshTokens.length;
+    user.refreshTokens = user.refreshTokens.filter(session => session.token !== token);
+
+    if (user.refreshTokens.length === originalLength) {
+      return res.status(404).json({ error: 'نشست موردنظر یافت نشد.' });
+    }
+
+    await user.save();
+    res.status(200).json({ message: 'نشست با موفقیت حذف شد.' });
+  } catch (err) {
+    res.status(500).json({ error: 'خطا در حذف نشست.' });
+  }
+};
+
+//==========================delete same session=========================
+
+
+
+
 // ✅ خروجی توابع
 module.exports = {
   register,
@@ -317,7 +344,8 @@ module.exports = {
   listSessions,
   removeSession,
   logoutOtherDevices,
-  getUserSessions
+  getUserSessions,
+  deleteSameSession,
 };
 
 
