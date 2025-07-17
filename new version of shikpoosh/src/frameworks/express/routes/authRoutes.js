@@ -67,7 +67,7 @@ router.post('/refresh-token', refreshToken);   // نیازی به authMiddleware
 //================ sessions routes=================
 router.get('/sessions', authenticate, listSessions);
 router.delete('/sessions/:token', authenticate, removeSession);//حتما باید از refreshToken داخل Cookie استفاده کنیم
-router.delete('/sessions/:token', authenticate, deleteSameSession);
+router.delete('/deleteSameSessions/:token', authenticate, deleteSameSession);
 router.get('/getUserSessions', authenticate, getUserSessions);
 //================ sessions routes=================
 

@@ -310,7 +310,7 @@ const deleteSameSession = async (req, res) => {
   const user = req.user;
 
   try {
-    // فیلتر کردن سشن‌هایی که برابر با توکن حذف‌شونده نیستند
+    // فیلتر کردن سشن‌هایی که برابر با توکن حذف‌ شونده نیستند
     const originalLength = user.refreshTokens.length;
     user.refreshTokens = user.refreshTokens.filter(session => session.token !== token);
 
