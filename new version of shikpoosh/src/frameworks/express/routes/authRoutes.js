@@ -69,6 +69,8 @@ router.get('/sessions', authenticate, listSessions);
 router.delete('/remove-session', authenticate, removeSession); // بدون token در URL
 router.delete('/deleteSameSessions', authenticate, deleteSameSession);
 router.get('/getUserSessions', authenticate, getUserSessions);
+
+
 //================ sessions routes=================
 
 
