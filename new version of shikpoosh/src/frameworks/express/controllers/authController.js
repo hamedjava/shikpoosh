@@ -254,15 +254,25 @@ const listSessions = async (req, res) => {
 
 //==============================DELETE A SESSION============================
 const removeSession = async (req, res) => {
-  const { token } = req.params;
+  const user = req.user;
+
+  // اولویت با Cookie، بعد Header
+  const token =
+    req.cookies?.refreshToken ||
+    req.header('x-refresh-token');
+
+  if (!token) {
+    return res.status(400).json({ error: 'توکن رفرش یافت نشد ❌' });
+  }
 
   try {
-    await deleteSession(req.user._id, token);
+    await deleteSession(user._id, token);
     res.status(200).json({ message: 'سشن با موفقیت حذف شد ✅' });
   } catch (err) {
     res.status(404).json({ error: err.message });
   }
 };
+
 //==============================DELETE A SESSION============================
 
 
@@ -306,12 +316,16 @@ const getUserSessions = async (req, res) => {
 
 //==========================delete same session=========================
 const deleteSameSession = async (req, res) => {
-  const { token } = req.params;
+  const token = req.headers['x-refresh-token']; // گرفتن توکن از header
   const user = req.user;
 
+  if (!token) {
+    return res.status(400).json({ error: 'توکن در هدر ارسال نشده است.' });
+  }
+
   try {
-    // فیلتر کردن سشن‌هایی که برابر با توکن حذف‌شونده نیستند
     const originalLength = user.refreshTokens.length;
+
     user.refreshTokens = user.refreshTokens.filter(session => session.token !== token);
 
     if (user.refreshTokens.length === originalLength) {
@@ -324,6 +338,7 @@ const deleteSameSession = async (req, res) => {
     res.status(500).json({ error: 'خطا در حذف نشست.' });
   }
 };
+
 
 //==========================delete same session=========================
 

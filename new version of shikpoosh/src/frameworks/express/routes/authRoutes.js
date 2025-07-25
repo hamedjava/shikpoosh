@@ -58,16 +58,16 @@ router.post('/verify-otp', verifyOtp);
 router.get('/protected', protected);
 //=============================================================
 // 👇 مسیرهای logout و refresh
-router.post('/logout', authenticate, authController.logout);
-router.post('/logout-other-devices', authenticate, authController.logoutOtherDevices);
+router.post('/logout', authenticate, logout);
+router.post('/logout-other-devices',logoutOtherDevices);
 router.post('/logout-all', authenticate, logoutAll);
 router.post('/refresh-token', refreshToken);   // نیازی به authMiddleware ندارد
 //==============================================================
 
 //================ sessions routes=================
 router.get('/sessions', authenticate, listSessions);
-router.delete('/sessions/:token', authenticate, removeSession);//حتما باید از refreshToken داخل Cookie استفاده کنیم
-router.delete('/deleteSameSessions/:token', authenticate, deleteSameSession);
+router.delete('/remove-session', authenticate, removeSession); // بدون token در URL
+router.delete('/deleteSameSessions', authenticate, deleteSameSession);
 router.get('/getUserSessions', authenticate, getUserSessions);
 //================ sessions routes=================
 
